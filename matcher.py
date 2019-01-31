@@ -97,55 +97,7 @@ def scale_exponentially(percentage, scale):
     return new_percentage
 
 
-def test_data(data):
-    # params
-    max_search_string_length = 45
-    max_row_length = 120
 
-    print('-' * max_row_length)
-    print('Confidence', '\t', 'Search String', ' ' * (max_search_string_length - len('Search String')), 'Record String')
-    print('-' * max_row_length)
-    for pair in data:
-        search = pair['search']
-        record = pair['record']
-        confidence_percentage = round(100 * match_confidence(search, record), 3)
-        print (str(confidence_percentage) + '%   ', '\t', search, ' ' * (max_search_string_length - len(search)), record)
-
-
-testing_data = [
-    {
-        'search': 'Apple iPhone 8 128GB',
-        'record': 'Apple iPhone 8 4.7", 64 GB, Fully Unlocked, Gold'
-    },
-    {
-        'search': 'Samsung S9 64GB Black',
-        'record': 'Samsung Galaxy S8 64GB Black'
-    },
-    {
-        'search': 'Samsung S9 64GB Black',
-        'record': 'Samsung S9 64GB'
-    },
-    {
-        'search': 'Samsung Galaxy S9 64GB Black',
-        'record': 'Samsung Galaxy S8 64GB Black'
-    },
-    {
-        'search': 'Samsung Galaxy S9 64GB Black',
-        'record': 'Samsung S9 64GB'
-    },
-    {
-        'search': 'iPhone 8 128GB',
-        'record': 'IPhone 8 128Gb'
-    },
-    {
-        'search': 'APPLE iPhone 8 128GB',
-        'record': 'Apple Iphone 8 128Gb'
-    },
-    {
-        'search': '',
-        'record': ''
-    }
-]
 
 # print (Polygon([[0,0], [2,80], [10,100]]).y(6))
 
