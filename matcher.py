@@ -1,18 +1,18 @@
 from samething.graphs import Parabola, Polygon
 import re
 
-
 digit_pattern = re.compile('\d') # declared here for performance reasons
 
 
-def match_confidence(search_string, record_string):
+def match_confidence(search_string, record_string, record_ranking=0):
     search_words = extract_words(search_string)
     record_words = extract_words(record_string)
 
     # todo: determine individual scales using machine learning
     confidence = scale_exponentially(nr_words_in_search(search_words), 0.3) \
                  * scale_exponentially(percentage_search_words_matched(search_words, record_words), 1) \
-                 * scale_exponentially(percentage_record_words_matched(search_words, record_words), 0.5)
+                 * scale_exponentially(percentage_record_words_matched(search_words, record_words), 0.5) \
+                 * scale_exponentially(ranking_of_record(record_ranking), 2)
 
     return normalize_confidence(confidence)
 
@@ -30,9 +30,7 @@ def remove_empty_strings(strings):
 
 
 def nr_words_in_search(search_words):
-    x = len(search_words)
-    y = Parabola(points = [[0, 0], [3, .82], [6, 1]]).y(x)
-    return y
+    return Parabola(points = [[0, 0], [3, .82], [6, 1]]).y(len(search_words))
 
 
 def rank_word(word):
@@ -80,8 +78,11 @@ def nr_search_words_matched(search_words, record_words):
             matches += 1
 
     x = matches
-    y = Parabola(points = [[0, 0], [3, .82], [8, 1]]).y(x)
-    return y
+    return Parabola(points = [[0, 0], [3, .82], [8, 1]]).y(x)
+
+
+def ranking_of_record(record_ranking):
+    return Polygon([[0,1], [3,0.9], [20,0.7], [100,0.6]]).y(record_ranking)
 
 
 def scale_linear(percentage, scale):

@@ -7,16 +7,16 @@ class Thing:
         self.search_string = search_string
 
 
-    def same(self, record_string):
-        return match_confidence(self.search_string, record_string)
+    def same(self, record_string, result_ranking = None):
+        return match_confidence(self.search_string, record_string, record_ranking= result_ranking)
 
 
-    def most_same(self, record_string_list):
+    def most_same(self, record_string_list, ordered_by_popularity=False):
         most_same_index = 0
         most_same = 0
 
-        for i in range(len(record_string_list)):
-            same = self.same(record_string_list[i])
+        for i, record_string in enumerate(record_string_list):
+            same = self.same(record_string, i)
             if same > most_same:
                 most_same = same
                 most_same_index = i
