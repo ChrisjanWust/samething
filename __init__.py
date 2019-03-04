@@ -1,3 +1,4 @@
+from operator import itemgetter
 from samething.matcher import *
 
 
@@ -22,6 +23,23 @@ class Thing:
                 most_same_index = i
 
         return most_same_index
+
+
+    def most_same_listed(self, record_string_list, ordered_by_popularity=False):
+        return_list = []
+
+        for i, record_string in enumerate(record_string_list):
+            same = self.same(record_string, i)
+            return_list.append({
+                'index': i,
+                'name': record_string,
+                'confidence': same
+            })
+
+        return_list.sort(key=itemgetter('confidence'), reverse=True)
+
+        return return_list
+
 
 
 
