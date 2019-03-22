@@ -12,7 +12,7 @@ def match_confidence(search_string, record_string, record_ranking=0):
     confidence = scale_exponentially(nr_words_in_search(search_words), 0.3) \
                  * scale_exponentially(percentage_search_words_matched(search_words, record_words), 1) \
                  * scale_exponentially(percentage_record_words_matched(search_words, record_words), 0.5) \
-                 * scale_exponentially(ranking_of_record(record_ranking), 2)
+                 * scale_exponentially(ranking_of_record(record_ranking), 3)
 
     return normalize_confidence(confidence)
 
@@ -82,7 +82,7 @@ def nr_search_words_matched(search_words, record_words):
 
 
 def ranking_of_record(record_ranking):
-    return Polygon([[0,1], [3,0.9], [20,0.7], [100,0.6]]).y(record_ranking)
+    return Polygon([[1,1], [3,0.9], [20,0.7], [100,0.6]]).y(record_ranking)
 
 
 def scale_linear(percentage, scale):
