@@ -37,7 +37,6 @@ class Parabola:
             print("Error in the given parabola parameters. Not enough points or equation parameters where given")
 
 
-
     def set_equation_from_points(self, points):
         # adapted from http://chris35wills.github.io/parabola_python/
 
@@ -69,6 +68,27 @@ class Parabola:
 
 
 
+# Creates a "Polygon" from a set of points (basically it just draws lines between
+# these points.
+# The result is essentially a linear graph with different equations at different sections
+# It could look something like this:
+'''
+
+  ^
+  |
+  y
+                    ̷	
+                  ̷	
+                ̷	
+               /
+              /
+             /	
+    ________/	            
+                                
+                                
+                                x ->
+
+'''
 class Polygon:
 
     def __init__(self, points):
