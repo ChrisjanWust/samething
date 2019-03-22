@@ -1,9 +1,10 @@
 from samething.graphs import Parabola, Polygon
 import re
 
-digit_pattern = re.compile('\d') # declared here for performance reasons
+digit_pattern = re.compile('\d')  # declared here for performance reasons. (Odd way to check for digits, I know)
 
 
+#                       MAIN FUNCTION
 def match_confidence(search_string, record_string, record_ranking=0):
     search_words = extract_words(search_string)
     record_words = extract_words(record_string)
@@ -29,35 +30,13 @@ def nr_words_in_search(search_words):
 
 
 def percentage_search_words_matched(search_words, record_words):
-    if len(search_words) == 0:
-        return 0
-    else:
-        total_matches = 0
-        total_possible = 0
-        for word in search_words:
-            word_ranked = rank_word(word)
-            total_possible += word_ranked
-            if word in record_words:
-                total_matches += word_ranked
-
-        x = total_matches / total_possible
-        return Parabola([[0,0], [.50,.40], [.85,1]]).y(x)
+    x = percentage_words_matched(search_words, record_words)
+    return Parabola([[0,0], [.50,.40], [.85,1]]).y(x)
 
 
 def percentage_record_words_matched(search_words, record_words):
-    if len(search_words) == 0:
-        return 0
-    else:
-        total_matches = 0
-        total_possible = 0
-        for word in record_words:
-            word_ranked = rank_word(word)
-            total_possible += word_ranked
-            if word in search_words:
-                total_matches += word_ranked
-
-        x = total_matches / total_possible
-        return Parabola([[0,0], [.50,.40], [.85,1]]).y(x)
+    x = percentage_words_matched(record_words, search_words)
+    return Parabola([[0, 0], [.50, .40], [.85, 1]]).y(x)
 
 
 def ranking_of_record(record_ranking):
@@ -71,8 +50,53 @@ def extract_words(string = ""):
     return remove_empty_strings(string.upper().split(' '))
 
 
+# if the words fully match, return 1.
+# If they partially match, return lower scores.
+# And obviously, if they don't match at all, return 0
+def matches_word(word1, word2):
+    if word1 == word2:
+        return 1
+    if word1 in word2:
+        if word1.startswith(word2):
+            return 0.7
+        else:
+            return 0.5
+    if word2 in word1:
+        if word1.startswith(word2):
+            return 0.6
+        else:
+            return 0.45
+    return 0
+
+
+# uses matches_word on a list of matches
+def best_word_match(lookup_word, possible_match_words):
+    match_scores = [matches_word(lookup_word, possible_match_word) for possible_match_word in possible_match_words]
+    best_match_score = max(match_scores)
+    return best_match_score
+
+
 def remove_empty_strings(strings):
     return [string for string in strings if len(string) != 0]
+
+
+# searches for occurences of lookup_words in possible_match_words
+# keep count of the total_matches and total_possible matches
+# finally express as a percentage by dividing
+def percentage_words_matched(lookup_words, possible_match_words):
+    if len(possible_match_words) == 0:
+        return 0
+    else:
+        total_matches = 0
+        total_possible = 0
+        for word in lookup_words:
+            word_ranked = rank_word(word)
+            total_possible += word_ranked
+            if word in possible_match_words:
+                total_matches += word_ranked
+
+        percentage = total_matches / total_possible
+        return percentage
 
 
 # words with digits are more important than words without.
@@ -93,5 +117,4 @@ def scale_linear(percentage, scale):
 
 
 def scale_exponentially(percentage, scale):
-    new_percentage = percentage ** scale
-    return new_percentage
+    return percentage ** scale
