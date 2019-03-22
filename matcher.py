@@ -14,28 +14,18 @@ def match_confidence(search_string, record_string, record_ranking=0):
                  * scale_exponentially(percentage_record_words_matched(search_words, record_words), 0.5) \
                  * scale_exponentially(ranking_of_record(record_ranking), 3)
 
-    return normalize_confidence(confidence)
+    return scale_exponentially(confidence, 1/3)  # confidence is normalized.
 
 
-def extract_words(string = ""):
-    return remove_empty_strings(string.upper().split(' '))
 
+#                         METRICS FUNCTIONS
 
-def normalize_confidence(confidence):
-    return scale_exponentially(confidence, 1/3)
-
-
-def remove_empty_strings(strings):
-    return [string for string in strings if len(string) != 0]
+# Each of these methods returns a confidence score (out of 1).
+# These scores are then combined to produce the final confidence score.
 
 
 def nr_words_in_search(search_words):
     return Parabola(points = [[0, 0], [3, .82], [6, 1]]).y(len(search_words))
-
-
-def rank_word(word):
-    nr_digits = len(digit_pattern.findall(word))
-    return Polygon([[0,1], [1,2.2], [4,2.4], [10,2.8]]).y(nr_digits)
 
 
 def percentage_search_words_matched(search_words, record_words):
@@ -70,19 +60,28 @@ def percentage_record_words_matched(search_words, record_words):
         return Parabola([[0,0], [.50,.40], [.85,1]]).y(x)
 
 
-
-def nr_search_words_matched(search_words, record_words):
-    matches = 0
-    for search_word in search_words:
-        if search_word in record_words:
-            matches += 1
-
-    x = matches
-    return Parabola(points = [[0, 0], [3, .82], [8, 1]]).y(x)
-
-
 def ranking_of_record(record_ranking):
     return Polygon([[1,1], [3,0.9], [20,0.7], [100,0.6]]).y(record_ranking)
+
+
+
+#                   HELPER FUNCTIONS
+
+def extract_words(string = ""):
+    return remove_empty_strings(string.upper().split(' '))
+
+
+def remove_empty_strings(strings):
+    return [string for string in strings if len(string) != 0]
+
+
+# words with digits are more important than words without.
+# (matching 'S8' is more important than matching 'Galaxy')
+# The more digits in a word, the higher the probability of
+# it being a model number
+def rank_word(word):
+    nr_digits = len(digit_pattern.findall(word))
+    return Polygon([[0,1], [1,2.2], [4,2.4], [10,2.8]]).y(nr_digits)
 
 
 def scale_linear(percentage, scale):
@@ -96,10 +95,3 @@ def scale_linear(percentage, scale):
 def scale_exponentially(percentage, scale):
     new_percentage = percentage ** scale
     return new_percentage
-
-
-
-
-# print (Polygon([[0,0], [2,80], [10,100]]).y(6))
-
-# print (scale_exp(1, 0.1))

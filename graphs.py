@@ -1,5 +1,15 @@
 class Parabola:
 
+    # generate a parabola function from either points or an equation
+    # self.a, self.b and self.c reflects constants in the standard form
+    # of a parabola equation, which is
+    #                  y = a * x^2 + b * x + c
+    # The upper and lower limit are required to prevent very high values from
+    # decreasing the confidence score. If you want the confidence to be basically
+    # 100% at x=7, the confidence will start to lower and at x=10 the confidence
+    # might be 80%. Assigning a low confidence to a pair with 10 word matches is
+    # obviously wrong. Thus, in this case, any values past the upper_limit will
+    # automatically have the same confidence as that of the limit.
     def __init__(self, points=[], equation=[], upper_limit = 'AUTO', lower_limit = 'AUTO'):
         self.lower_limit = lower_limit
         self.upper_limit = upper_limit
@@ -7,6 +17,7 @@ class Parabola:
         if len(points) >= 3:
             self.set_equation_from_points(points)
 
+            # If the limit is 'AUTO', it is assigned to the values first and last x values given
             if self.lower_limit == 'AUTO':
                 self.lower_limit = points[0][0]
             if self.upper_limit == 'AUTO':
@@ -38,27 +49,8 @@ class Parabola:
         self.c = (x2 * x3 * (x2 - x3) * y1 + x3 * x1 * (x3 - x1) * y2 + x1 * x2 * (x1 - x2) * y3) / denominator
 
 
-    def y_from_equation(self, x):
-        return self.a * x ** 2 + self.b * x + self.c
-
-
-    def y_from_points(self, x_input, points):
-        y = 1
-
-        if x_input < points[0][0]:
-            y = 0
-        elif x_input < points[2][0]:
-            Parabola.set_equation_from_points(points)
-            y = Parabola.y_from_equation(x_input)
-
-            if y > 1:
-                y = 1
-
-        return y
-
-
     def print_range(self, resolution = 1):
-        print ('Points in graph:\t', end='')
+        print('Points in graph:\t', end='')
 
         x = 0
         while x <= self.upper_limit + resolution:
@@ -72,7 +64,7 @@ class Parabola:
         elif x >= self.upper_limit and self.upper_limit is not None:
             x = self.upper_limit
 
-        return self.y_from_equation(x)
+        return self.a * x ** 2 + self.b * x + self.c
 
 
 
