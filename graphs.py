@@ -1,7 +1,5 @@
 class Parabola:
 
-    # todo: inversely_proportional can actually be deducted by looking if points' y co-ordinates rise with points' x co-ordinates
-
     def __init__(self, points=[], equation=[], upper_limit = 'AUTO', lower_limit = 'AUTO'):
         self.lower_limit = lower_limit
         self.upper_limit = upper_limit
@@ -101,6 +99,3 @@ class Polygon:
 
             return y
 
-
-# para1 = Parabola([[0, 0], [50, 40], [85, 100]])
-# para1.print_range(10)
