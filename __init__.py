@@ -27,7 +27,8 @@ class Thing:
         return_list = []
 
         for i, record_string in enumerate(record_string_list):
-            same = self.same(record_string, i)
+            record_ranking = (i + 1) if ordered_by_popularity else 0
+            same = self.same(record_string, record_ranking)
             return_list.append({
                 'index': i,
                 'name': record_string,
