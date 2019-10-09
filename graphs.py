@@ -1,29 +1,35 @@
-class Parabola:
+import math
+from numbers import Number
 
-    # generate a parabola function from either points or an equation
-    # self.a, self.b and self.c reflects constants in the standard form
-    # of a parabola equation, which is
-    #                  y = a * x^2 + b * x + c
-    # The upper and lower limit are required to prevent very high values from
-    # decreasing the confidence score. If you want the confidence to be basically
-    # 100% at x=7, the confidence will start to lower and at x=10 the confidence
-    # might be 80%. Assigning a low confidence to a pair with 10 word matches is
-    # obviously wrong. Thus, in this case, any values past the upper_limit will
-    # automatically have the same confidence as that of the limit.
-    def __init__(self, points=[], equation=[], upper_limit = 'AUTO', lower_limit = 'AUTO'):
+class Parabola:
+    """
+    generate a parabola function from either points or an equation
+    self.a, self.b and self.c reflects constants in the standard form
+    of a parabola equation, which is
+                     y = a * x^2 + b * x + c
+    The upper and lower limit are required to prevent very high values from
+    decreasing the confidence score. If you want the confidence to be basically
+    100% at x=7, the confidence will start to lower and at x=10 the confidence
+    might be 80%. Assigning a low confidence to a pair with 10 word matches is
+    obviously wrong. Thus, in this case, any values past the upper_limit will
+    automatically have the same confidence as that of the limit.
+    """
+
+    def __init__(self, points = None, equation = None, upper_limit = 'AUTO', lower_limit = 'AUTO'):
+        assert len(points) > 3 or len(equation) > 3,\
+            "Either 3 (x,y) points or 3 equation params (a, b & c) must be given"
         self.lower_limit = lower_limit
         self.upper_limit = upper_limit
 
         if len(points) >= 3:
             self.set_equation_from_points(points)
-
             # If the limit is 'AUTO', it is assigned to the values first and last x values given
             if self.lower_limit == 'AUTO':
                 self.lower_limit = points[0][0]
             if self.upper_limit == 'AUTO':
                 self.upper_limit = points[2][0]
 
-        elif len(equation) >= 3:
+        else:
             self.a = equation[0]
             self.b = equation[1]
             self.c = equation[2]
@@ -32,9 +38,6 @@ class Parabola:
                 self.lower_limit = None
             if self.upper_limit == 'AUTO':
                 self.upper_limit = None
-
-        else:
-            print("Error in the given parabola parameters. Not enough points or equation parameters where given")
 
 
     def set_equation_from_points(self, points):
@@ -48,15 +51,6 @@ class Parabola:
         self.c = (x2 * x3 * (x2 - x3) * y1 + x3 * x1 * (x3 - x1) * y2 + x1 * x2 * (x1 - x2) * y3) / denominator
 
 
-    def print_range(self, resolution = 1):
-        print('Points in graph:\t', end='')
-
-        x = 0
-        while x <= self.upper_limit + resolution:
-            print(str(x) + ":" + str(round(self.y(x), 2)), end=', ')
-            x += resolution
-
-
     def y(self, x):
         if x <= self.lower_limit and self.lower_limit is not None:
             x = self.lower_limit
@@ -66,36 +60,49 @@ class Parabola:
         return self.a * x ** 2 + self.b * x + self.c
 
 
+    def print_range(self, resolution = 1):
+        print('Points in graph:\t', end='')
+
+        x = 0
+        while x <= self.upper_limit + resolution:
+            print(str(x) + ":" + str(round(self.y(x), 2)), end=', ')
+            x += resolution
 
 
-# Creates a "Polygon" from a set of points (basically it just draws lines between
-# these points.
-# The result is essentially a linear graph with different equations at different sections
-# It could look something like this:
-'''
 
-  ^
-  |
-  y
-                    ̷	
-                  ̷	
-                ̷	
-               /
-              /
-             /	
-    ________/	            
-                                
-                                
-                                x ->
 
-'''
 class Polygon:
+    """
+    Creates a "Polygon" from a set of points (basically it just draws lines between
+    these points).
+    The result is essentially a linear graph with different equations at different sections
+    It could look something like this:
+
+
+      ^
+      |
+      y
+                          ̷	\
+                       ̷	 \
+                    ̷	      \
+                   /           \
+                  /             \
+                 /	             \
+        ________/	              \________
+
+
+                                    x ->
+
+    """
 
     def __init__(self, points):
+        assert not any(None in point for point in points), f"Points contain a None value:\n{points}"
         self.points = points
 
 
     def y(self, x):
+        assert isinstance(x, Number), f'Parameter `x` is not a number, it is {x} of type {type(x)}'
+
         if x < self.points[0][0]:
             return self.points[0][1]
         elif x > self.points[len(self.points) - 1][0]:
@@ -111,3 +118,14 @@ class Polygon:
 
             return y
 
+
+
+class Sigmoid:
+
+    def __init__(self, x_88th_percentile=2):
+        self.stretch = x_88th_percentile/2
+        pass
+
+    def y(self, x):
+        x = x / self.stretch
+        return 1 / (1 + math.exp(-x))
