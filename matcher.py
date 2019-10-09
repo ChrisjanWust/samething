@@ -5,18 +5,23 @@ digit_pattern = re.compile('\d')  # declared here for performance reasons. (Odd 
 
 
 #                       MAIN FUNCTION
-def match_confidence(search_string, record_string, record_ranking=0):
-    search_words = extract_words(search_string)
-    record_words = extract_words(record_string)
 
-    # todo: determine individual scales using machine learning
-    confidence = scale_exponentially(nr_words_in_search(search_words), 0.3) \
-                 * scale_exponentially(percentage_search_words_matched(search_words, record_words), 1) \
-                 * scale_exponentially(percentage_record_words_matched(search_words, record_words), 0.5) \
-                 * scale_exponentially(ranking_of_record(record_ranking), 3)
+def match_confidence(search_string, record_string, record_ranking=0):
+    search_words = _extract_words(search_string)
+    record_words = _extract_words(record_string)
+
+    confidence = scale_exponentially(_nr_words_in_search(search_words), 0.3) \
+                 * scale_exponentially(_percentage_search_words_matched(search_words, record_words), 1) \
+                 * scale_exponentially(_percentage_record_words_matched(search_words, record_words), 0.5) \
+                 * scale_exponentially(_ranking_of_record(record_ranking), 3)
 
     return scale_exponentially(confidence, 1/3)  # confidence is normalized.
 
+
+def best_word_match(lookup_word, possible_match_words):
+    match_scores = [matches_word(lookup_word, possible_match_word) for possible_match_word in possible_match_words]
+    best_match_score = max(match_scores)
+    return best_match_score
 
 
 #                         METRICS FUNCTIONS
@@ -25,29 +30,29 @@ def match_confidence(search_string, record_string, record_ranking=0):
 # These scores are then combined to produce the final confidence score.
 
 
-def nr_words_in_search(search_words):
-    return Parabola(points = [[0, 0], [3, .82], [6, 1]]).y(len(search_words))
+def _nr_words_in_search(search_words):
+    return Parabola(points=[[0, 0], [3, .82], [6, 1]]).y(len(search_words))
 
 
-def percentage_search_words_matched(search_words, record_words):
-    x = percentage_words_matched(search_words, record_words)
+def _percentage_search_words_matched(search_words, record_words):
+    x = _percentage_words_matched(search_words, record_words)
     return Parabola([[0,0], [.50,.40], [.85,1]]).y(x)
 
 
-def percentage_record_words_matched(search_words, record_words):
-    x = percentage_words_matched(record_words, search_words)
+def _percentage_record_words_matched(search_words, record_words):
+    x = _percentage_words_matched(record_words, search_words)
     return Parabola([[0, 0], [.50, .40], [.85, 1]]).y(x)
 
 
-def ranking_of_record(record_ranking):
+def _ranking_of_record(record_ranking):
     return Polygon([[1,1], [3,0.9], [20,0.7], [100,0.6]]).y(record_ranking)
 
 
 
 #                   HELPER FUNCTIONS
 
-def extract_words(string = ""):
-    return remove_empty_strings(string.upper().split(' '))
+def _extract_words(string=""):
+    return _remove_empty_strings(string.upper().split(' '))
 
 
 def matches_word(lookup_word, possible_match_word):
@@ -59,28 +64,22 @@ def matches_word(lookup_word, possible_match_word):
     return lower scores. And obviously, if they
     don't match at all, return 0
     """
+    if lookup_word == possible_match_word:
         return 1
-    if word1 in word2:
-        if word1.startswith(word2):
+    if lookup_word in possible_match_word:
+        if lookup_word.startswith(possible_match_word):
             return 0.7
         else:
             return 0.5
-    if word2 in word1:
-        if word1.startswith(word2):
+    if possible_match_word in lookup_word:
+        if lookup_word.startswith(possible_match_word):
             return 0.6
         else:
             return 0.45
     return 0
 
 
-# uses matches_word on a list of matches
-def best_word_match(lookup_word, possible_match_words):
-    match_scores = [matches_word(lookup_word, possible_match_word) for possible_match_word in possible_match_words]
-    best_match_score = max(match_scores)
-    return best_match_score
-
-
-def remove_empty_strings(strings):
+def _remove_empty_strings(strings):
     return [string for string in strings if len(string) != 0]
 
 
@@ -99,10 +98,10 @@ def _percentage_words_matched(lookup_words, possible_match_words):
         total_matches = 0
         total_possible = 0
         for word in lookup_words:
-            word_ranked = rank_word(word)
+            word_ranked = _rank_word(word)
             total_possible += word_ranked
-            if word in possible_match_words:
-                total_matches += word_ranked
+            best_match = best_word_match(word, possible_match_words)  # a score (between 0 and 1) is returned
+            total_matches += best_match * word_ranked  # because the score is 0, the
 
         percentage = total_matches / total_possible
         return percentage
@@ -133,3 +132,6 @@ def scale_linear(percentage, scale):
 
 def scale_exponentially(percentage, scale):
     return percentage ** scale
+
+
+
