@@ -1,5 +1,5 @@
 from operator import itemgetter
-from samething.matcher import *
+from .matcher import *
 
 
 class Thing:

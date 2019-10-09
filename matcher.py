@@ -1,4 +1,4 @@
-from samething.graphs import Parabola, Polygon
+from .graphs import Parabola, Polygon
 import re
 
 digit_pattern = re.compile('\d')  # declared here for performance reasons. (Odd way to check for digits, I know)
