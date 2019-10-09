@@ -113,3 +113,14 @@ class Polygon:
 
             return y
 
+
+
+class Sigmoid:
+
+    def __init__(self, x_88th_percentile=2):
+        self.stretch = x_88th_percentile/2
+        pass
+
+    def y(self, x):
+        x = x / self.stretch
+        return 1 / (1 + math.exp(-x))
