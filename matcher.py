@@ -50,11 +50,15 @@ def extract_words(string = ""):
     return remove_empty_strings(string.upper().split(' '))
 
 
-# if the words fully match, return 1.
-# If they partially match, return lower scores.
-# And obviously, if they don't match at all, return 0
-def matches_word(word1, word2):
-    if word1 == word2:
+def matches_word(lookup_word, possible_match_word):
+    """
+    :param lookup_word: string
+    :param possible_match_word: string
+    :return: matching score, from 0-1. If the words
+    fully match, return 1. If they partially match,
+    return lower scores. And obviously, if they
+    don't match at all, return 0
+    """
         return 1
     if word1 in word2:
         if word1.startswith(word2):
@@ -80,10 +84,15 @@ def remove_empty_strings(strings):
     return [string for string in strings if len(string) != 0]
 
 
-# searches for occurences of lookup_words in possible_match_words
-# keep count of the total_matches and total_possible matches
-# finally express as a percentage by dividing
-def percentage_words_matched(lookup_words, possible_match_words):
+def _percentage_words_matched(lookup_words, possible_match_words):
+    """
+    searches for occurences of lookup_words in possible_match_words
+    keep count of the total_matches and total_possible matches
+    finally express as a percentage by dividing
+    :param lookup_words: list of strings
+    :param possible_match_words: list of strings
+    :return: percentage, from 0-1
+    """
     if len(possible_match_words) == 0:
         return 0
     else:
@@ -99,11 +108,17 @@ def percentage_words_matched(lookup_words, possible_match_words):
         return percentage
 
 
-# words with digits are more important than words without.
-# (matching 'S8' is more important than matching 'Galaxy')
-# The more digits in a word, the higher the probability of
-# it being a model number
-def rank_word(word):
+def _rank_word(word):
+    """
+    words with digits are more important than words without.
+    (matching 'S8' is more important than matching 'Galaxy')
+    The more digits in a word, the higher the probability of
+    it being a model number
+    :param word: str
+    :return: word importance. A regular word would be scored as 1,
+    and this would increase based on the number of digits. Max is
+    2.8 for 10 digits in the word.
+    """
     nr_digits = len(digit_pattern.findall(word))
     return Polygon([[0,1], [1,2.2], [4,2.4], [10,2.8]]).y(nr_digits)
 

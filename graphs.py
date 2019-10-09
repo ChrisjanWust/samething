@@ -1,15 +1,20 @@
 class Parabola:
+    """
+    generate a parabola function from either points or an equation
+    self.a, self.b and self.c reflects constants in the standard form
+    of a parabola equation, which is
+                     y = a * x^2 + b * x + c
+    The upper and lower limit are required to prevent very high values from
+    decreasing the confidence score. If you want the confidence to be basically
+    100% at x=7, the confidence will start to lower and at x=10 the confidence
+    might be 80%. Assigning a low confidence to a pair with 10 word matches is
+    obviously wrong. Thus, in this case, any values past the upper_limit will
+    automatically have the same confidence as that of the limit.
+    """
 
     def __init__(self, points = None, equation = None, upper_limit = 'AUTO', lower_limit = 'AUTO'):
     # self.a, self.b and self.c reflects constants in the standard form
     # of a parabola equation, which is
-    #                  y = a * x^2 + b * x + c
-    # The upper and lower limit are required to prevent very high values from
-    # decreasing the confidence score. If you want the confidence to be basically
-    # 100% at x=7, the confidence will start to lower and at x=10 the confidence
-    # might be 80%. Assigning a low confidence to a pair with 10 word matches is
-    # obviously wrong. Thus, in this case, any values past the upper_limit will
-    # automatically have the same confidence as that of the limit.
         self.lower_limit = lower_limit
         self.upper_limit = upper_limit
 
@@ -64,31 +69,29 @@ class Parabola:
 
         return self.a * x ** 2 + self.b * x + self.c
 
-
-
-
-# Creates a "Polygon" from a set of points (basically it just draws lines between
-# these points.
-# The result is essentially a linear graph with different equations at different sections
-# It could look something like this:
-'''
-
-  ^
-  |
-  y
-                    ̷	
-                  ̷	
-                ̷	
-               /
-              /
-             /	
-    ________/	            
-                                
-                                
-                                x ->
-
-'''
 class Polygon:
+    """
+    Creates a "Polygon" from a set of points (basically it just draws lines between
+    these points).
+    The result is essentially a linear graph with different equations at different sections
+    It could look something like this:
+
+
+      ^
+      |
+      y
+                          ̷	\
+                       ̷	 \
+                    ̷	      \
+                   /           \
+                  /             \
+                 /	             \
+        ________/	              \________
+
+
+                                    x ->
+
+    """
 
     def __init__(self, points):
         self.points = points
