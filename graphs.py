@@ -1,6 +1,6 @@
 class Parabola:
 
-    # generate a parabola function from either points or an equation
+    def __init__(self, points = None, equation = None, upper_limit = 'AUTO', lower_limit = 'AUTO'):
     # self.a, self.b and self.c reflects constants in the standard form
     # of a parabola equation, which is
     #                  y = a * x^2 + b * x + c
@@ -10,7 +10,6 @@ class Parabola:
     # might be 80%. Assigning a low confidence to a pair with 10 word matches is
     # obviously wrong. Thus, in this case, any values past the upper_limit will
     # automatically have the same confidence as that of the limit.
-    def __init__(self, points=[], equation=[], upper_limit = 'AUTO', lower_limit = 'AUTO'):
         self.lower_limit = lower_limit
         self.upper_limit = upper_limit
 
