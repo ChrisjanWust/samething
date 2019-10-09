@@ -16,12 +16,14 @@ class Parabola:
     """
 
     def __init__(self, points = None, equation = None, upper_limit = 'AUTO', lower_limit = 'AUTO'):
-        assert len(points) > 3 or len(equation) > 3,\
+        points = points or []
+        equation = equation or []
+        assert len(points) == 3 or len(equation) == 3,\
             "Either 3 (x,y) points or 3 equation params (a, b & c) must be given"
         self.lower_limit = lower_limit
         self.upper_limit = upper_limit
 
-        if len(points) >= 3:
+        if len(points) == 3:
             self.set_equation_from_points(points)
             # If the limit is 'AUTO', it is assigned to the values first and last x values given
             if self.lower_limit == 'AUTO':
